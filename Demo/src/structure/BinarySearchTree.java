@@ -1,4 +1,4 @@
-package demo;
+package structure;
 
 public class BinarySearchTree<E extends Comparable<? super E>> {
 	private static class BinaryNode<E>{

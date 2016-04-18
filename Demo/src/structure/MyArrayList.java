@@ -1,4 +1,4 @@
-package demo;
+package structure;
 
 import java.util.Iterator;
 /**
