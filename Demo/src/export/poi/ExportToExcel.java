@@ -5,7 +5,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
- * 一个ExportToExcel对象就是一个Excel文件
+ * 一个ExportToExcel对象就是一个Excel文件.
  * 1.创建一页
  * 2.循环将要进行导出的数据
  * 3.循环中调用getRow方法创建一行
