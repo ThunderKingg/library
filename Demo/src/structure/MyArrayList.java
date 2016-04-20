@@ -24,6 +24,7 @@ public class MyArrayList<E> implements Iterable<E> {
 		ensureCapacity(DEFAULT_CAPACITY);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void ensureCapacity(int newCapacity){
 		if(newCapacity < theSize){
 			return;
