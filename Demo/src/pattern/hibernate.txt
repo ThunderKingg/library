@@ -1,0 +1,83 @@
+hibernate配置文件常用参数如下：
+connection.url:表示数据库URL。jdbc:oracle:thin:@localhost:1521:orcl,是Oracle数据库的URL。其中jdbc:oracle:thin:@是固定写法，localhost是IP地址，1521是端口号，orcl是数据库实例名。
+connection.username:表示数据库用户名。
+connection.password:表示数据库用户密码。
+connection.driver_class:表示数据库驱动。oracle.jdbc.driver.OracleDriver是Oracle数据库的驱动类。
+dialect:用于配置hibernate使用的数据库类型。
+current_session_context_class:指定currentSession()方法所得到的Session由谁来跟踪管理。thread指Session由当前线程来跟踪管理。
+show_sql:参数为true,则程序运行时在控制台输出SQL语句。
+format_sql:参数为true,则程序运行时在控制台输出格式化后的SQL语句。
+
+hibernate要求持久化类必须具有一个无参数的构造方法。
+hibernate映射文件各种参数如下：
+class:定义一个持久化类的映射信息。常用属性如下：
+	name表示持久化类的全限定名。
+	table表示持久化类对应的数据库表名。
+	schema表示Oracle数据库实例中的用户。
+id:表示持久化类的OID和表的主键映射。常用属性如下：
+	name表示持久化类属性的名称，和属性的访问器相匹配。
+	type表示持久化类属性的类型。
+	column表示持久化类属性对应的数据库表字段的名称，也可在子元素column中指定。
+generator:id元素的字元素，用于指定主键的生成策略。常用属性及子元素如下：
+	class用来指定具体主键生成策略。
+	param用来传递参数。
+
+常用主键的生成策略如下：
+1：increment:对类型为long,short或int的主键，以自动增长的方式生成主键。主键按数值顺序递增，增量为1.
+2：identity:对如SQL Server,DB2,MySQL等支持标识列的数据库，可使用该主键生成策略生成自动增长主键，但要在数据库中将该主键设置为标识列。
+3：sequence:对如Oracle，DB2等支持序列的数据库，可使用该主键生成策略生成自动增长主键，通过子元素param传入数据库中序列的名称。
+4：native:由Hibernate根据底层数据库自行判断采用何种主键生成策略，即由使用的数据库生成主键的值。
+5：assigned:主键由应用程序负责生成，无序hibernate参与。
+property:定义持久化类中属性和数据库中表的字段的相应关系，常用属性如下：
+	name表示持久化类属性的名称，和属性的访问器相匹配。
+	type表示持久化类属性的类型。
+	column表示持久化类属性对应的数据库表字段的名称，也可在子元素column中指定。
+column元素：用于指定其父元素代表的持久化类属性所对应的数据库中表的字段。常用属性如下：
+	name表示字段的名称。
+	length表示字段长度。
+	not-null设定是否可以为Null,值为true表示不能为null
+
+使用hibernate操作数据库包括7个步骤。
+1：读取并解析配置文件。
+	Configuration cfg = new Configuration.configure();
+	根据默认位置的Hibernate配置文件的配置信息，构建Cconfiguration对象。
+	Configuration负责管理Hibernate的配置信息。
+	configure()方法可选参数，读取参数位置的配置文件。.
+2：读取并解析映射信息，创建SessionFactory对象。
+	hibernate4 已经废弃原来的buildSessionFactory()无参方法，使用有参方法传入一个ServiceRegistry对象。
+	ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+					.applySettings(cfg.getProperties())
+					.build();
+	SessionFactory sf = cfg.buildSessionFactory(serviceRegistry);
+	SessionFactory负责创建Session对象。Configuration对象会根据当前的数据库配置信息，构造SessionFactory对象。SessionFactory对象一旦构造完成，则Configuration对象的任何变更将
+	不会影响已经创建的SessionFactory对象。如果Hibernate配置信息有改动，那么需要基于改动后的Configuration对象重新构建一个SesisonFactory对象。
+3：开启一个会话
+	Session sesison = sf.openSession();//或使用sf.getCurrentSession();
+4：开始一个事务（增删改操作必须）
+	Transaction tx = session.beginTransaction();
+5：数据库操作
+	session.save();
+6:结束事务。
+	commit() or rollback();
+7:关闭会话
+	session.close();
+如果在hibernate配置文件中，参数current_session_context_class设置为thread,并采用getCurrentSession()方法获得session对象，则不需要执行session.close()方法。
+
+hibernate提供了两种方法按照主键加载对象：get()和load()方法。
+	Object get(Class clazz,Serializable id).
+	Object load(Class clazz,Serializable id).
+当使用Session的get()方法时，如果加载的数据不存在，get()方法会返回一个NULL，但是使用load()方法，若加载的数据不存在，则会抛出异常。
+
+Hibernate中Session提供了多种更新数据的持久化方法，如update(),saveOrUpdate(),merge()方法。
+	1：update()方法，用于对游离状态的对象进行数据库更新操作。当没有OID时会报错。
+	2：saveOrUpdate()方法，同时包含了save()与update()方法的功能，如果传入参数是瞬时状态的对象，调用save()方法；如果传入的参数是游离状态的对象，就调用update()方法。
+	3：merge()方法，能够把一个游离状态的对象的属性复制到一个持久化对象中，执行更新或插入(如果无法从Session缓存或数据库中加载到相应的持久化对象，则执行插入)
+	操作并返回持久化的对象。若传入的是瞬时对象，则保存并返回其副本。无论何种情况，传入的对象状态都不收影响。
+在映射文件中，为class标签配置dynamic_update="true"，作用是只修改发生变化的属性。
+如果当前Session缓存中没有包含具有相同OID的持久化对象，可以使用update()或saveOrUpdate()方法；如果想随时合并对象的修改而不考虑Session缓存中对象的状态，可以使用merge()方法。
+
+ hibernate关联映射
+ 多对一使用many-to-one元素，它包括以下属性。
+	1：name:设定持久化类的属性名。
+	2：column：设定持久化类的属性对应的表的外键。
+	3：class:设定持久化类的属性的类型。
