@@ -8,19 +8,21 @@ package arithmetic;
  * 
  * 创建自己的数据类型时，需要实现Comparable接口实现compareTo()
  * 
- * 对于v<w、v=w和v>w三种情况
  * 习惯v.compareTo(w)被调用时返回一个负整数、零和一个正整数
- * v<w 返回-1
- * v=w 返回0
- * v>w 返回1
- * 此外,compareTo()必须实现一个完整的比较序列，即：
- * 自反性：对于所有的v，v=v;
- * 反对称性：对于所有的v<w都有w>v,且v=w时，w=v
- * 传递性，对于v,w和x,如果v<=w且w<=x,则v<=w;
- * @author Administrator
+ * @author 王雷
  *
  */
 public class Selection {
+	/**
+	 * 无参构造
+	 */
+	public Selection(){}
+	
+	/**
+	 * 对给定数组进行选择排序
+	 * @param a 传入的是一个实现了Comparable接口的数组
+	 */
+	@SuppressWarnings("rawtypes")
 	public static void sort(Comparable[] a) {
 		int n = a.length;
 		for (int i = 0; i < n; i++) {
@@ -34,35 +36,36 @@ public class Selection {
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static boolean less(Comparable v, Comparable w) {
 		return v.compareTo(w) < 0;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private static void exch(Comparable[] a, int i, int j) {
 		Comparable t = a[i];
 		a[i] = a[j];
 		a[j] = t;
 	}
 	
+	@SuppressWarnings({ "unused", "rawtypes" })
 	private static void show(Comparable[] a) {
 		for (int i = 0; i < a.length; i++) {
 			System.out.print(a[i] + "");
 		}
 		System.out.println();
 	}
-	
+	/**
+	 * 判断给定数组是否是有序的
+	 * @param a 给定实现了Comparable接口的数组
+	 * @return 如果有序返回true,否则返回false
+	 */
+	@SuppressWarnings("rawtypes")
 	public static boolean isSorted(Comparable[] a) {
 		for (int i = 0; i < a.length; i++) {
 			if (less(a[i], a[i-1]))
 				return false;
 		}
 		return true;
-	}
-	public static void main(String[] args) {
-		Integer[] a = {5,2,1,4,54,23};
-		sort(a);
-		for (int i = 0; i < a.length; i++) {
-			System.out.println(a[i]);
-		}
 	}
 }
