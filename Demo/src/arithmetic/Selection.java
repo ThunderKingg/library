@@ -12,18 +12,14 @@ package arithmetic;
  * @author 王雷
  *
  */
-public class Selection {
-	/**
-	 * 无参构造
-	 */
-	public Selection(){}
+public class Selection extends Example {
 	
 	/**
 	 * 对给定数组进行选择排序
 	 * @param a 传入的是一个实现了Comparable接口的数组
 	 */
 	@SuppressWarnings("rawtypes")
-	public static void sort(Comparable[] a) {
+	public void sort(Comparable[] a) {
 		int n = a.length;
 		for (int i = 0; i < n; i++) {
 			int min = i;
@@ -34,38 +30,5 @@ public class Selection {
 			}
 			exch(a, i, min);
 		}
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static boolean less(Comparable v, Comparable w) {
-		return v.compareTo(w) < 0;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private static void exch(Comparable[] a, int i, int j) {
-		Comparable t = a[i];
-		a[i] = a[j];
-		a[j] = t;
-	}
-	
-	@SuppressWarnings({ "unused", "rawtypes" })
-	private static void show(Comparable[] a) {
-		for (int i = 0; i < a.length; i++) {
-			System.out.print(a[i] + "");
-		}
-		System.out.println();
-	}
-	/**
-	 * 判断给定数组是否是有序的
-	 * @param a 给定实现了Comparable接口的数组
-	 * @return 如果有序返回true,否则返回false
-	 */
-	@SuppressWarnings("rawtypes")
-	public static boolean isSorted(Comparable[] a) {
-		for (int i = 0; i < a.length; i++) {
-			if (less(a[i], a[i-1]))
-				return false;
-		}
-		return true;
 	}
 }
